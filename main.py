@@ -11,10 +11,12 @@ class PongPaddle(Widget):
     def bounce_ball(self, ball):
         if self.collide_widget(ball):
             vx, vy = ball.velocity
-            offset = (ball.center_y - self.center_y) / (self.height / 2)
+            offset = (ball.center_y - self.center_y) / (self.height / 4)
             bounced = Vector(-1 * vx, vy)
-            vel = bounced * 1.1
-            ball.velocity = vel.x, vel.y + offset
+            if abs(bounced.x) < 35:
+                print(bounced.x)
+                bounced *= 1.1
+            ball.velocity = bounced.x, bounced.y + offset
 
 
 class PongBall(Widget):
@@ -36,11 +38,13 @@ class PongGame(Widget):
         self.ball.velocity = vel
 
     def update(self, dt):
-        self.ball.move()
-
         # bounce off paddles
         self.player1.bounce_ball(self.ball)
         self.player2.bounce_ball(self.ball)
+
+        self.ball.move()
+
+        self.player2.center_y = self.ball.y
 
         # bounce ball off bottom or top
         if (self.ball.y < self.y) or (self.ball.top > self.top):
@@ -48,17 +52,18 @@ class PongGame(Widget):
 
         # went off to a side to score point?
         if self.ball.x < self.x:
+            print(self.ball.velocity)
             self.player2.score += 1
             self.serve_ball(vel=(4, 0))
         if self.ball.right > self.width:
+            print(self.ball.velocity)
             self.player1.score += 1
             self.serve_ball(vel=(-4, 0))
 
     def on_touch_move(self, touch):
         if touch.x < self.width / 3:
             self.player1.center_y = touch.y
-        if touch.x > self.width - self.width / 3:
-            self.player2.center_y = touch.y
+
 
 
 class PongApp(App):
