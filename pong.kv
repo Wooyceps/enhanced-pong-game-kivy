@@ -28,10 +28,25 @@
             pos: self.pos
             size: self.size
 
+<StatTracker>
+    Label:
+        font_size: 40
+
+        Label:
+            x: root.x
+            bottom: root.center_y + 3
+            text: #####
+
+        Label:
+            x: root.x
+            top: root.center_y - 3
+            text: #####
+
 <PongGame>:
     ball: pong_ball
     player1: player_left
     player2: player_right
+    stat_tracker: pong_stats
 
     canvas:
 
@@ -71,3 +86,7 @@
     PongBall:
         id: pong_ball
         center: self.parent.center
+
+    StatTracker:
+        id: pong_stats
+        center: root.width * 3 / 4, root.height / 4
