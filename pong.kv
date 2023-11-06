@@ -29,18 +29,7 @@
             size: self.size
 
 <StatTracker>
-    Label:
-        font_size: 40
-
-        Label:
-            x: root.x
-            bottom: root.center_y + 3
-            text: #####
-
-        Label:
-            x: root.x
-            top: root.center_y - 3
-            text: #####
+    font_size: 40
 
 <PongGame>:
     ball: pong_ball
@@ -89,4 +78,14 @@
 
     StatTracker:
         id: pong_stats
-        center: root.width * 3 / 4, root.height / 4
+        Label:
+            center_y: root.height / 4 + 20
+            x: root.width * 3 / 4
+            base_direction: "ltr"
+            text: "Current exchange: " + str(root.stat_tracker.current_exchange)
+
+        Label:
+            center_y: root.height / 4 - 20
+            x: root.width * 3 / 4
+            base_direction: "ltr"
+            text: "Longest exchange: " + str(root.stat_tracker.longest_exchange)

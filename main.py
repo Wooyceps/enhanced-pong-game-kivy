@@ -17,11 +17,12 @@ class PongPaddle(Widget):
                 print(bounced.x)
                 bounced *= 1.1
             ball.velocity = bounced.x, bounced.y + offset
+            return True
 
 
 class StatTracker(Widget):
     current_exchange = NumericProperty(0)
-    best_exchange = NumericProperty(0)
+    longest_exchange = NumericProperty(0)
 
 
 class PongBall(Widget):
@@ -40,14 +41,18 @@ class PongGame(Widget):
     stat_tracker = ObjectProperty(None)
 
     current_exchange = NumericProperty(0)
+
     def serve_ball(self, vel=(4, 0)):
         self.ball.center = self.center
         self.ball.velocity = vel
 
     def update(self, dt):
         # bounce off paddles
-        self.player1.bounce_ball(self.ball, self.stat_tracker)
-        self.player2.bounce_ball(self.ball, self.stat_tracker)
+        if self.player1.bounce_ball(self.ball, self.stat_tracker) or self.player2.bounce_ball(self.ball, self.stat_tracker):
+            self.stat_tracker.current_exchange += 1
+
+        if self.stat_tracker.current_exchange > self.stat_tracker.longest_exchange:
+            self.stat_tracker.longest_exchange = self.stat_tracker.current_exchange
 
         self.ball.move()
 
@@ -59,11 +64,11 @@ class PongGame(Widget):
 
         # went off to a side to score point?
         if self.ball.x < self.x:
-            print(self.ball.velocity)
+            self.stat_tracker.current_exchange = 0
             self.player2.score += 1
             self.serve_ball(vel=(4, 0))
         if self.ball.right > self.width:
-            print(self.ball.velocity)
+            self.stat_tracker.current_exchange = 0
             self.player1.score += 1
             self.serve_ball(vel=(-4, 0))
 
